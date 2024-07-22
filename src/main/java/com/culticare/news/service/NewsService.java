@@ -20,13 +20,23 @@ public class NewsService {
     @Transactional
     public void saveNews(NewsCreateRequestDto dto) {
 
+        News news = dto.toEntity();
+
+        NewsType newsType = newsTypeRepository.findByName(dto.getNewsType())
+                .orElseGet(() -> {
+                    NewsType newNewsType = NewsType.builder()
+                            .name(dto.getTitle())
+                            .build();
+                    return newsTypeRepository.save(newNewsType);
+                });
+
+        news.setNewsType(newsType);
+
+        newsRepository.save(news);
     }
 
     public void getNewsByType(String type) {
 
     }
-
-    public NewsListResponseDto getNewsListByType(String newsType) {
-        
-    }
+    
 }
