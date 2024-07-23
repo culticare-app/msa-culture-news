@@ -5,14 +5,17 @@ import com.culticare.common.exception.ErrorCode;
 import com.culticare.news.controller.dto.request.NewsCreateRequestDto;
 import com.culticare.news.controller.dto.response.NewsListResponseDto;
 import com.culticare.news.controller.dto.response.NewsResponseDto;
+import com.culticare.news.entity.MemberNewsScrap;
 import com.culticare.news.entity.News;
 import com.culticare.news.entity.NewsType;
+import com.culticare.news.repository.MemberNewsScrapRepository;
 import com.culticare.news.repository.NewsRepository;
 import com.culticare.news.repository.NewsTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +25,7 @@ import java.util.List;
 public class NewsService {
     private final NewsRepository newsRepository;
     private final NewsTypeRepository newsTypeRepository;
+    private final MemberNewsScrapRepository memberNewsScrapRepository;
 
     @Transactional
     public void saveNews(NewsCreateRequestDto dto) {
@@ -87,4 +91,41 @@ public class NewsService {
     }
 
 
+    @Transactional
+    public Long scrapNews(Long loginMemberId, Long newsId) {
+
+        News findNews = newsRepository.findById(newsId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+
+
+        if (memberNewsScrapRepository.existsByMemberIdAndNews(loginMemberId, findNews)) {
+            throw new CustomException(ErrorCode.EXIST_MEMBER_NEWS_SCRAP);
+        }
+
+        MemberNewsScrap memberNewsScrap = MemberNewsScrap.builder()
+                .memberId(loginMemberId)
+                .news(findNews)
+                .build();
+
+        return memberNewsScrapRepository.save(memberNewsScrap).getId();
+    }
+
+    @Transactional
+    public void deleteScrap(Long loginMemberId, Long newsId) {
+
+        News findNews = newsRepository.findById(newsId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+
+
+        if (!memberNewsScrapRepository.existsByMemberIdAndNews(loginMemberId, findNews)) {
+            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER_NEWS_SCRAP);
+        }
+
+        MemberNewsScrap findMemberNewsScrap = memberNewsScrapRepository.findByMemberIdAndNews(loginMemberId, findNews)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER_NEWS_SCRAP));
+
+        memberNewsScrapRepository.delete(findMemberNewsScrap);
+    }
+
+    
 }
