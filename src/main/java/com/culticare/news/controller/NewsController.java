@@ -44,4 +44,22 @@ public class NewsController {
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
+    // 뉴스 스크랩
+    @PostMapping("/scrap/{newsId}")
+    public ResponseEntity<Long> scrapNews(@RequestHeader("memberId") Long loginMemberId, @PathVariable("newsId") Long newsId) {
+
+        Long result = newsService.scrapNews(loginMemberId, newsId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    // 뉴스 스크랩 취소
+    @DeleteMapping("/scrap/{newsId}")
+    public ResponseEntity<Void> deleteScrapNews(@RequestHeader("memberId") Long loginMemberId, @PathVariable("newsId") Long newsId) {
+
+        newsService.deleteScrap(loginMemberId, newsId);
+
+        return ResponseEntity.ok().build();
+    }
 }
