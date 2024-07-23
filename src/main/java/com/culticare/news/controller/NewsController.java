@@ -20,7 +20,7 @@ public class NewsController {
 
     // 뉴스 생성 - 관리자 페이지
     @PostMapping("/create")
-    public ResponseEntity<Void> saveNews(NewsCreateRequestDto newsCreateRequestDto) {
+    public ResponseEntity<Void> saveNews(@RequestBody NewsCreateRequestDto newsCreateRequestDto) {
 
         newsService.saveNews(newsCreateRequestDto);
 

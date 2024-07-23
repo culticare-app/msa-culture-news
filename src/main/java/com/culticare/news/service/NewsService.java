@@ -127,5 +127,5 @@ public class NewsService {
         memberNewsScrapRepository.delete(findMemberNewsScrap);
     }
 
-    
+
 }
