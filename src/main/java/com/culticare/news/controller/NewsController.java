@@ -2,11 +2,14 @@ package com.culticare.news.controller;
 
 import com.culticare.news.controller.dto.request.NewsCreateRequestDto;
 import com.culticare.news.controller.dto.response.NewsListResponseDto;
+import com.culticare.news.controller.dto.response.NewsResponseDto;
 import com.culticare.news.service.NewsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/news")
@@ -26,10 +29,19 @@ public class NewsController {
 
     // 뉴스 목록 타입(카테고리)별 조회
     @GetMapping("/list")
-    public ResponseEntity<NewsListResponseDto> findByType(@RequestParam(name = "newsType") String newsType) {
+    public ResponseEntity<List<NewsListResponseDto>> findByType(@RequestParam(name = "newsType") String newsType) {
 
-        NewsListResponseDto newsListResponseDto = newsService.getNewsListByType(newsType);
+        List<NewsListResponseDto> newsListResponseDto = newsService.getNewsListByType(newsType);
 
         return ResponseEntity.status(HttpStatus.OK).body(newsListResponseDto);
+    }
+
+    // 뉴스 개별 조회
+    @GetMapping("/{newsId}")
+    public ResponseEntity<NewsResponseDto> findById(@RequestHeader("memberId") Long loginMemberId, @PathVariable("newsId") Long newsId) {
+
+        NewsResponseDto result = newsService.getNewsById(loginMemberId, newsId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }

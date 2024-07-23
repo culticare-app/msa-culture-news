@@ -1,7 +1,7 @@
 package com.culticare.news.controller.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
@@ -10,13 +10,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NewsListResponseDto {
+public class NewsResponseDto {
+
     private Long id;
     private String title;
     private String content;
     private String newsType;
-    @JsonFormat(pattern = "yyyy-MM-dd-HH-mm-ss")
     private LocalDateTime createdAt;
-    @JsonFormat(pattern = "yyyy-MM-dd-HH-mm-ss")
     private LocalDateTime modifiedAt;
+
 }
